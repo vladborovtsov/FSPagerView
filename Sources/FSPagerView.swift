@@ -105,6 +105,16 @@ open class FSPagerView: UIView,UICollectionViewDataSource,UICollectionViewDelega
             }
         }
     }
+  
+  @IBInspectable
+  open var automaticSlidingDuration: TimeInterval = 0.3 {
+    didSet {
+      self.cancelTimer()
+      if self.automaticSlidingDuration > 0 {
+        self.startTimer()
+      }
+    }
+  }
     
     /// The spacing to use between items in the pager view. Default is 0.
     @IBInspectable
@@ -554,7 +564,9 @@ open class FSPagerView: UIView,UICollectionViewDataSource,UICollectionViewDelega
             let item = (indexPath.item+1) % self.numberOfItems
             return self.collectionViewLayout.contentOffset(for: IndexPath(item: item, section: section))
         }()
-        self.collectionView.setContentOffset(contentOffset, animated: true)
+      UIView.animate(withDuration: self.automaticSlidingDuration) {
+        self.collectionView.contentOffset = contentOffset
+      }
     }
     
     fileprivate func cancelTimer() {
